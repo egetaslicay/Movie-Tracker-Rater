@@ -12,47 +12,48 @@ public class Movie {
 //REQUIRES: title is a non-empty string, genre and comment are not null, rating is an integer between 1 and 5 inclusive
 //EFFECTS: constructor sets all relevant fields of the movie according to parameters
     public Movie(String title, String genre, int rating, String comment) {
-        this.title = null;
-        this.genre = null;
-        this.rating = 1;
-        this.comment = null;
+        this.title = title;
+        this.genre = genre;
+        this.rating = rating;
+        this.comment = comment;
     }
 
 
     public String getTitle() {
-        return null;
+        return title;
     }
 
     public String getGenre() {
-        return null;
+        return genre;
     }
-    
+
     public int getRating() {
-        return 0;
+        return rating;
     }
 
     public String getComment() {
-        return null;
+        return comment;
     }
 
     // REQUIRES: newRating is an integer between 1 and 5 inclusive
     // MODIFIES: this
     // EFFECTS: updates the movie’s rating to newRating
     public void setRating(int newRating) {
-        // stub
+        this.rating = newRating;
     }
 
     // REQUIRES: newComment is not null
     // MODIFIES: this
     // EFFECTS: updates the movie’s comment to newComment
     public void setComment(String newComment) {
-        // stub
+        this.comment = newComment;
     }
 
     // EFFECTS: returns a string summary of the movie including title, genre, rating, and comment
     @Override
     public String toString() {
-        return ""; // stub
+        return "Movie Title: " + title + ", Genre: " + genre + ", Rating: " + rating + "/5, Comment: " + comment;
     }
 }
+
 
