@@ -2,15 +2,19 @@ package model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
+
 
 
 class TestMovie {
     private Movie testMovieInterstellar;
 
-    @BeforeEach 
+    @BeforeEach
     void runBefore() {
         testMovieInterstellar = new Movie("Interstellar", "Sci-Fi", 4, "Nolan's best");
     }
