@@ -15,7 +15,6 @@ Task 3:
 
 ## User Stories
 
-
 **Implemented so far for phase 1** 
 
 - As a user, I want to add a movie to my collection with a title, genre, rating, and personal comment.
@@ -32,3 +31,11 @@ Task 3:
 - As a user, I want to be able to save the collection of movies I have inputted (If I choose to do so). 
 - As a user, I want to be able to load in a saved collection of movies (If I choose to do so). 
 - As a user, when quitting the program I would like to be reminded that I can save the collection of movies if I choose to do so. 
+
+-------------------------------------------------------------------------------------------
+
+**Citation:**
+
+- Credit to Paul Carter. My persistence implementation / Phase 2 was modeled after the given sample authored by him:
+- JSON Serialization Demo: https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo 
+
