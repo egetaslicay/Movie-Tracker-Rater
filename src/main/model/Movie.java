@@ -52,7 +52,7 @@ public class Movie {
     // EFFECTS: returns a string summary of the movie including title, genre, rating, and comment
     @Override
     public String toString() {
-        return "Movie Title: " + title + ", Genre: " + genre + ", Rating: " + rating + "/5, Comment: " + comment;
+        return "zMovie Title: " + title + ", Genre: " + genre + ", Rating: " + rating + "/5, Comment: " + comment;
     }
 }
 
