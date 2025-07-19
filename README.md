@@ -27,9 +27,8 @@ Task 3:
 
 --------------------------------------------------------------------------------------- 
 
-**Will maybe be implemented later** 
+**Phase 2 user stories** 
 
-- As a user, I want to sort my movie collection by rating, from highest to lowest.
-- As a user, I want to update the rating or comment of a movie I’ve already added.
-- As a user, I want to view a list of my top-rated movies (e.g., rating 9 and above).
-- As a user, I want to create a custom group (e.g., “Comfort Movies”) and add movies to that group.
+- As a user, I want to be able to save the collection of movies I have inputted (If I choose to do so). 
+- As a user, I want to be able to load in a saved collection of movies (If I choose to do so). 
+- As a user, when quitting the program I would like to be reminded that I can save the collection of movies if I choose to do so. 
