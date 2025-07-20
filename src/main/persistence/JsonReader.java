@@ -1,4 +1,3 @@
-
 package persistence;
 
 import model.Movie;
@@ -24,31 +23,48 @@ public class JsonReader {
     // EFFECTS: reads MovieLibrary from file and returns it;
     // throws IOException if an error occurs reading data from file
     public MovieLibrary read() throws IOException {
-        // no implementation yet
-        return null;
+        String jsonData = readFile(source);
+        JSONObject jsonObject = new JSONObject(jsonData);
+        return parseMovieLibrary(jsonObject);
     }
 
     // EFFECTS: reads source file as string and returns it
     private String readFile(String source) throws IOException {
-        // no implementation yet
-        return null;
+        StringBuilder contentBuilder = new StringBuilder();
+
+        try (Stream<String> stream = Files.lines(Paths.get(source), StandardCharsets.UTF_8)) {
+            stream.forEach(contentBuilder::append);
+        }
+
+        return contentBuilder.toString();
     }
 
-    // EFFECTS: parses MovieLibrary from JSON object and returns it
+    // EFFECTS: parses movie library from JSON object and returns it
     private MovieLibrary parseMovieLibrary(JSONObject jsonObject) {
-        // no implementation yet
-        return null;
+        MovieLibrary library = new MovieLibrary();
+        addMovies(library, jsonObject);
+        return library;
     }
 
     // MODIFIES: library
-    // EFFECTS: parses movies from JSON object and adds them to MovieLibrary
+    // EFFECTS: parses movies from JSON object and adds them to movie library
     private void addMovies(MovieLibrary library, JSONObject jsonObject) {
-        // no implementation yet
+        JSONArray jsonArray = jsonObject.getJSONArray("movies");
+        for (Object json : jsonArray) {
+            JSONObject nextMovie = (JSONObject) json;
+            addMovie(library, nextMovie);
+        }
     }
 
     // MODIFIES: library
-    // EFFECTS: parses movie from JSON object and adds it to MovieLibrary
+    // EFFECTS: parses movie from JSON object and adds it to movie library
     private void addMovie(MovieLibrary library, JSONObject jsonObject) {
-        // no implementation yet
+        String title = jsonObject.getString("title");
+        String genre = jsonObject.getString("genre");
+        int rating = jsonObject.getInt("rating");
+        String comment = jsonObject.getString("comment");
+
+        Movie movie = new Movie(title, genre, rating, comment);
+        library.addMovie(movie);
     }
 }
