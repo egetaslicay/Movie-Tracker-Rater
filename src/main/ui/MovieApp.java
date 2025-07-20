@@ -19,7 +19,8 @@ public class MovieApp {
 
     @SuppressWarnings("methodlength")
     // MODIFIES: this
-    // EFFECTS: initializes scanner, library, persistence objects, and runs the app loop
+    // EFFECTS: initializes scanner, library, persistence objects, and runs the app
+    // loop
     public void run() {
         scanner = new Scanner(System.in);
         library = new MovieLibrary();
@@ -72,21 +73,21 @@ public class MovieApp {
 
     // EFFECTS: displays main menu options
     private void displayMenu() {
-    System.out.println("\n===================================");
-    System.out.println("        🎬 Movie Tracker 🎬        ");
-    System.out.println("===================================");
-    System.out.println("1 - Add a movie");
-    System.out.println("2 - View all movies");
-    System.out.println("3 - Search for movie by title");
-    System.out.println("4 - View movies by genre");
-    System.out.println("5 - Remove a movie");
-    System.out.println("6 - Check average movie rating");
-    System.out.println("s - Save movie library to file");
-    System.out.println("l - Load movie library from file");
-    System.out.println("q - Quit");
-    System.out.println("===================================");
-    System.out.print("Enter your choice: ");
-}
+        System.out.println("\n===================================");
+        System.out.println("        🎬 Movie Tracker 🎬        ");
+        System.out.println("===================================");
+        System.out.println("1 - Add a movie");
+        System.out.println("2 - View all movies");
+        System.out.println("3 - Search for movie by title");
+        System.out.println("4 - View movies by genre");
+        System.out.println("5 - Remove a movie");
+        System.out.println("6 - Check average movie rating");
+        System.out.println("s - Save movie library to file");
+        System.out.println("l - Load movie library from file");
+        System.out.println("q - Quit");
+        System.out.println("===================================");
+        System.out.print("Enter your choice: ");
+    }
 
     // MODIFIES: this
     // EFFECTS: prompts user for movie details and adds movie to library
@@ -126,7 +127,8 @@ public class MovieApp {
         }
     }
 
-    // EFFECTS: prompts user for title and displays matching movie, or not found message
+    // EFFECTS: prompts user for title and displays matching movie, or not found
+    // message
     private void searchByTitle() {
         System.out.print("\nEnter title to search: ");
         String title = scanner.nextLine().trim();
@@ -171,7 +173,8 @@ public class MovieApp {
         }
     }
 
-    // EFFECTS: displays the average rating of all movies, or message if library is empty
+    // EFFECTS: displays the average rating of all movies, or message if library is
+    // empty
     private void checkAverageRating() {
         System.out.println();
         if (library.getAllMovies().isEmpty()) {
