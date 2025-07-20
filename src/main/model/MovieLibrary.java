@@ -3,8 +3,13 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import persistence.Writable;
+
 // Represents a library of movies
-public class MovieLibrary {
+public class MovieLibrary implements Writable {
     private List<Movie> movies; // collection of movies added by the user
 
     // EFFECTS: constructor that creates an empty movie library
@@ -31,7 +36,8 @@ public class MovieLibrary {
         return false;
     }
 
-    // EFFECTS: returns a *copy* of all movies in the library (not sure why i made this to be honest?)
+    // EFFECTS: returns a *copy* of all movies in the library (not sure why i made
+    // this to be honest?)
     public List<Movie> getAllMovies() {
         return new ArrayList<>(movies);
     }
@@ -67,5 +73,19 @@ public class MovieLibrary {
             total += m.getRating();
         }
         return (double) total / movies.size();
+    }
+
+    // EFFECTS: returns a JSONObject that contains a list of all movies in the
+    // library
+    @Override
+    public JSONObject toJson() {
+        JSONArray jsonArray = new JSONArray();
+        for (Movie movie : movies) {
+            jsonArray.put(movie.toJson());
+        }
+
+        JSONObject json = new JSONObject();
+        json.put("movies", jsonArray);
+        return json;
     }
 }

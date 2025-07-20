@@ -13,19 +13,15 @@ class JsonWriterTest extends JsonTest {
 
     @Test
     void testWriterInvalidFile() {
-        try {
-            MovieLibrary library = new MovieLibrary();
-            JsonWriter writer = new JsonWriter("./data/my\0illegal:fileName.json");
-            writer.open();
-            fail("IOException was expected");
-        } catch (IOException e) {
-            // pass
-        }
+        MovieLibrary library = new MovieLibrary();
+        JsonWriter writer = new JsonWriter("./data/my\0illegal:fileName.json");
+
+        assertThrows(IOException.class, writer::open);
     }
 
     @Test
-    void testWriterEmptyMovieLibrary() {
-        try {
+    void testWriterEmptyMovieLibrary() throws IOException {
+        
             MovieLibrary library = new MovieLibrary();
             JsonWriter writer = new JsonWriter("./data/testWriterEmptyMovieLibrary.json");
             writer.open();
@@ -35,14 +31,11 @@ class JsonWriterTest extends JsonTest {
             JsonReader reader = new JsonReader("./data/testWriterEmptyMovieLibrary.json");
             library = reader.read();
             assertEquals(0, library.getAllMovies().size());
-        } catch (IOException e) {
-            fail("Exception should not have been thrown");
         }
-    }
 
     @Test
-    void testWriterGeneralMovieLibrary() {
-        try {
+    void testWriterGeneralMovieLibrary() throws IOException {
+     
             MovieLibrary library = new MovieLibrary();
             Movie m1 = new Movie("Inception", "Sci-Fi", 9, "Mind-bending thriller");
             Movie m2 = new Movie("The Notebook", "Romance", 8, "Classic love story");
@@ -60,9 +53,6 @@ class JsonWriterTest extends JsonTest {
             assertEquals(2, movies.size());
             checkMovie("Inception", "Sci-Fi", 9, "Mind-bending thriller", movies.get(0));
             checkMovie("The Notebook", "Romance", 8, "Classic love story", movies.get(1));
-
-        } catch (IOException e) {
-            fail("Exception should not have been thrown");
-        }
+        
     }
 }
