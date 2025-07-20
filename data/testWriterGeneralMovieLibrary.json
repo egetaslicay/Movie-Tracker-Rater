@@ -1,0 +1,16 @@
+{
+  "movies": [
+    {
+      "title": "Inception",
+      "genre": "Sci-Fi",
+      "rating": 9,
+      "comment": "Mind-bending thriller"
+    },
+    {
+      "title": "The Notebook",
+      "genre": "Romance",
+      "rating": 8,
+      "comment": "Classic love story"
+    }
+  ]
+}
