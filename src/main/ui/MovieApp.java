@@ -2,22 +2,31 @@ package ui;
 
 import model.Movie;
 import model.MovieLibrary;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
 public class MovieApp {
+    private static final String JSON_STORE = "./data/movies.json";
     private MovieLibrary library;
     private Scanner scanner;
+    private JsonWriter jsonWriter;
+    private JsonReader jsonReader;
 
     @SuppressWarnings("methodlength")
-    // EFFECTS: runs the movie tracker app
+    // MODIFIES: this
+    // EFFECTS: initializes scanner, library, persistence objects, and runs the app loop
     public void run() {
         scanner = new Scanner(System.in);
         library = new MovieLibrary();
-        System.out.println();
-        System.out.println();
-        System.out.println("Welcome to your Movie Tracker!");
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
+
+        System.out.println("\n\nWelcome to your Movie Tracker!");
         boolean keepGoing = true;
 
         while (keepGoing) {
@@ -43,7 +52,14 @@ public class MovieApp {
                 case "6":
                     checkAverageRating();
                     break;
+                case "s":
+                    saveLibrary();
+                    break;
+                case "l":
+                    loadLibrary();
+                    break;
                 case "q":
+                    askToSaveBeforeQuit();
                     keepGoing = false;
                     break;
                 default:
@@ -54,21 +70,26 @@ public class MovieApp {
         exitMessage();
     }
 
-    // EFFECTS: prints the main menu
+    // EFFECTS: displays main menu options
     private void displayMenu() {
-        System.out.println("\nWhat would you like to do?");
-        System.out.println("1 - Add a movie");
-        System.out.println("2 - View all movies");
-        System.out.println("3 - Search for movie by title");
-        System.out.println("4 - View movies by genre");
-        System.out.println("5 - Remove a movie");
-        System.out.println("6 - Check average movie rating");
-        System.out.println("q - Quit");
-        System.out.print("\nEnter your choice: ");
-    }
+    System.out.println("\n===================================");
+    System.out.println("        🎬 Movie Tracker 🎬        ");
+    System.out.println("===================================");
+    System.out.println("1 - Add a movie");
+    System.out.println("2 - View all movies");
+    System.out.println("3 - Search for movie by title");
+    System.out.println("4 - View movies by genre");
+    System.out.println("5 - Remove a movie");
+    System.out.println("6 - Check average movie rating");
+    System.out.println("s - Save movie library to file");
+    System.out.println("l - Load movie library from file");
+    System.out.println("q - Quit");
+    System.out.println("===================================");
+    System.out.print("Enter your choice: ");
+}
 
     // MODIFIES: this
-    // EFFECTS: adds a new movie to the library from user input
+    // EFFECTS: prompts user for movie details and adds movie to library
     private void addMovie() {
         System.out.println("\nAdd a New Movie");
 
@@ -90,7 +111,7 @@ public class MovieApp {
         System.out.println("\nMovie added successfully.\n");
     }
 
-    // EFFECTS: prints all movies in the library
+    // EFFECTS: prints all movies in the library, or a message if empty
     private void viewAllMovies() {
         System.out.println("\nYour Movie List:");
         List<Movie> all = library.getAllMovies();
@@ -105,7 +126,7 @@ public class MovieApp {
         }
     }
 
-    // EFFECTS: prints a movie matching the given title
+    // EFFECTS: prompts user for title and displays matching movie, or not found message
     private void searchByTitle() {
         System.out.print("\nEnter title to search: ");
         String title = scanner.nextLine().trim();
@@ -118,7 +139,7 @@ public class MovieApp {
         }
     }
 
-    // EFFECTS: prints movies that match a genre
+    // EFFECTS: prompts user for genre and prints all matching movies
     private void viewByGenre() {
         System.out.print("\nEnter genre: ");
         String genre = scanner.nextLine().trim();
@@ -136,7 +157,7 @@ public class MovieApp {
     }
 
     // MODIFIES: this
-    // EFFECTS: removes a movie with the given title, if it exists
+    // EFFECTS: removes movie from library by title if found
     private void removeMovie() {
         System.out.print("\nEnter title to remove: ");
         String title = scanner.nextLine().trim();
@@ -150,7 +171,7 @@ public class MovieApp {
         }
     }
 
-    // EFFECTS: displays the average rating of all movies
+    // EFFECTS: displays the average rating of all movies, or message if library is empty
     private void checkAverageRating() {
         System.out.println();
         if (library.getAllMovies().isEmpty()) {
@@ -161,7 +182,40 @@ public class MovieApp {
         }
     }
 
-    // EFFECTS: displays exit message
+    // EFFECTS: writes library to file; prints success or error message
+    private void saveLibrary() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(library);
+            jsonWriter.close();
+            System.out.println("Movie library saved to: " + JSON_STORE + "\n");
+        } catch (FileNotFoundException e) {
+            System.out.println("ERROR: Unable to write to file.\n");
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: loads library from file; prints success or error message
+    private void loadLibrary() {
+        try {
+            library = jsonReader.read();
+            System.out.println("Movie library loaded from: " + JSON_STORE + "\n");
+        } catch (IOException e) {
+            System.out.println("ERROR: Unable to read from file.\n");
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: asks user if they want to save before quitting; saves if yes
+    private void askToSaveBeforeQuit() {
+        System.out.print("Would you like to save your movie list before quitting? (y/n): ");
+        String choice = scanner.nextLine().trim().toLowerCase();
+        if (choice.equals("y")) {
+            saveLibrary();
+        }
+    }
+
+    // EFFECTS: prints goodbye message
     private void exitMessage() {
         System.out.println("\nThanks for using Movie Tracker. See you next time!\n");
     }

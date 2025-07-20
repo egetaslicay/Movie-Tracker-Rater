@@ -59,7 +59,7 @@ public class Movie implements Writable {
     // rating, and comment
     @Override
     public String toString() {
-        return "zMovie Title: " + title + ", Genre: " + genre + ", Rating: " + rating + "/5, Comment: " + comment;
+        return "Movie Title: " + title + ", Genre: " + genre + ", Rating: " + rating + "/5, Comment: " + comment;
     }
 
     // REQUIRES: this movie must have non-null title, genre, and comment
