@@ -2,8 +2,6 @@ package ui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import model.Movie;
 import model.MovieLibrary;
 import persistence.JsonReader;
@@ -14,8 +12,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import java.util.List;
 
-public class MovieAppGUI extends JFrame implements ActionListener {
+public class MovieAppGUI extends JFrame {
     private MovieLibrary library;
     private DefaultListModel<String> movieListModel;
     private JList<String> movieList;
@@ -26,8 +25,11 @@ public class MovieAppGUI extends JFrame implements ActionListener {
     private JsonWriter jsonWriter;
     private JsonReader jsonReader;
     private static final String JSON_STORE = "data/movies.json";
-    private static final String IMAGE_PATH = "data/splash.jpg"; 
+    private static final String IMAGE_PATH = "data/splash.jpg";
 
+    // MODIFIES: this
+    // EFFECTS: initializes the MovieAppGUI window with a splash screen and movie
+    // library
     public MovieAppGUI() {
         library = new MovieLibrary();
         jsonWriter = new JsonWriter(JSON_STORE);
@@ -45,29 +47,19 @@ public class MovieAppGUI extends JFrame implements ActionListener {
         setVisible(true);
     }
 
+    @SuppressWarnings("methodlength")
+    // MODIFIES: this
+    // EFFECTS: displays the splash/title screen with an image and start button
     private void showTitleScreen() {
         JPanel splashPanel = new JPanel();
         splashPanel.setLayout(new BoxLayout(splashPanel, BoxLayout.Y_AXIS));
         splashPanel.setBorder(BorderFactory.createEmptyBorder(60, 60, 60, 60));
         splashPanel.setBackground(new Color(24, 26, 34));
-      
-        try {
-            BufferedImage splashImage = ImageIO.read(new File(IMAGE_PATH));
-            if (splashImage == null) {
-                throw new IOException("ImageIO.read returned null – invalid format?");
-            }
-            Image scaledImage = splashImage.getScaledInstance(500, 300, Image.SCALE_SMOOTH);
-            JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
-            imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            splashPanel.add(imageLabel);
-            splashPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        } catch (IOException e) {
-            JLabel errorLabel = new JLabel("Failed to load image");
-            errorLabel.setForeground(Color.RED);
-            errorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            splashPanel.add(errorLabel);
-            System.err.println("Image error: " + e.getMessage());
-        }
+
+        JLabel splashLabel = loadSplashImage();
+        splashLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        splashPanel.add(splashLabel);
+        splashPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         JLabel title = new JLabel("🎬 Movie Tracker");
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -76,24 +68,47 @@ public class MovieAppGUI extends JFrame implements ActionListener {
         splashPanel.add(title);
         splashPanel.add(Box.createRigidArea(new Dimension(0, 30)));
 
-        JButton startButton = new JButton("Enter Library");
-        startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        startButton.setFont(new Font("SansSerif", Font.PLAIN, 18));
-        startButton.setBackground(new Color(102, 0, 204));
-        startButton.setForeground(Color.WHITE);
-        startButton.setFocusPainted(false);
-        startButton.addActionListener(e -> {
+        JButton startButton = createButton("Enter Library", () -> {
             getContentPane().removeAll();
             setupInputPanel();
             setupMovieList();
             revalidate();
             repaint();
         });
-
+        startButton.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         splashPanel.add(startButton);
+
         add(splashPanel, BorderLayout.CENTER);
     }
 
+    // EFFECTS: attempts to load splash image; if fails, returns error label
+    private JLabel loadSplashImage() {
+        try {
+            BufferedImage splashImage = ImageIO.read(new File(IMAGE_PATH));
+            if (splashImage == null) {
+                throw new IOException("Invalid image format");
+            }
+            Image scaledImage = splashImage.getScaledInstance(500, 300, Image.SCALE_SMOOTH);
+            return new JLabel(new ImageIcon(scaledImage));
+        } catch (IOException e) {
+            JLabel errorLabel = new JLabel("Failed to load image");
+            errorLabel.setForeground(Color.RED);
+            return errorLabel;
+        }
+    }
+
+    // EFFECTS: helper that creates a JButton with consistent styling and action
+    private JButton createButton(String text, Runnable action) {
+        JButton button = new JButton(text);
+        button.setBackground(new Color(102, 0, 204));
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.addActionListener(e -> action.run());
+        return button;
+    }
+
+    // EFFECTS: helper for GridBagLayout positioning
     private GridBagConstraints gbc(int x, int y) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = x;
@@ -103,6 +118,9 @@ public class MovieAppGUI extends JFrame implements ActionListener {
         return gbc;
     }
 
+    @SuppressWarnings("methodlength")
+    // MODIFIES: this
+    // EFFECTS: sets up input panel for adding/filtering/loading/saving movies
     private void setupInputPanel() {
         JPanel inputPanel = new JPanel(new GridBagLayout());
         inputPanel.setBackground(new Color(34, 36, 44));
@@ -110,56 +128,39 @@ public class MovieAppGUI extends JFrame implements ActionListener {
         titleField = new JTextField();
         ratingField = new JTextField();
         commentField = new JTextField();
-        genreField = new JComboBox<>(new String[]{
+        genreField = new JComboBox<>(new String[] {
                 "Action", "Drama", "Comedy", "Horror", "Sci-Fi", "Romance", "Thriller"
         });
 
-        JButton addButton = new JButton("Add Movie");
-        JButton filterButton = new JButton("Filter by Genre");
-        JButton showAllButton = new JButton("Show All Movies");
-        JButton avgRatingButton = new JButton("Average Rating");
-        JButton saveButton = new JButton("Save");
-        JButton loadButton = new JButton("Load");
-
-        addButton.addActionListener(this);
-        filterButton.addActionListener(e -> filterByGenre());
-        showAllButton.addActionListener(e -> refreshMovieList());
-        saveButton.addActionListener(e -> saveLibrary());
-        loadButton.addActionListener(e -> loadLibrary());
-        avgRatingButton.addActionListener(e -> displayAverageRating());
-
         int y = 0;
-
-        JLabel titleLabel = new JLabel("Title:");
-        titleLabel.setForeground(Color.WHITE);
-        inputPanel.add(titleLabel, gbc(0, y));
+        inputPanel.add(makeLabel("Title:"), gbc(0, y));
         inputPanel.add(titleField, gbc(1, y++));
-
-        JLabel genreLabel = new JLabel("Genre:");
-        genreLabel.setForeground(Color.WHITE);
-        inputPanel.add(genreLabel, gbc(0, y));
+        inputPanel.add(makeLabel("Genre:"), gbc(0, y));
         inputPanel.add(genreField, gbc(1, y++));
-
-        JLabel ratingLabel = new JLabel("Rating (1–5):");
-        ratingLabel.setForeground(Color.WHITE);
-        inputPanel.add(ratingLabel, gbc(0, y));
+        inputPanel.add(makeLabel("Rating (1–5):"), gbc(0, y));
         inputPanel.add(ratingField, gbc(1, y++));
-
-        JLabel commentLabel = new JLabel("Comment:");
-        commentLabel.setForeground(Color.WHITE);
-        inputPanel.add(commentLabel, gbc(0, y));
+        inputPanel.add(makeLabel("Comment:"), gbc(0, y));
         inputPanel.add(commentField, gbc(1, y++));
 
-        inputPanel.add(addButton, gbc(0, y));
-        inputPanel.add(filterButton, gbc(1, y++));
-        inputPanel.add(showAllButton, gbc(0, y));
-        inputPanel.add(avgRatingButton, gbc(1, y++));
-        inputPanel.add(saveButton, gbc(0, y));
-        inputPanel.add(loadButton, gbc(1, y++));
+        inputPanel.add(createButton("Add Movie", this::handleAddMovie), gbc(0, y));
+        inputPanel.add(createButton("Filter by Genre", this::filterByGenre), gbc(1, y++));
+        inputPanel.add(createButton("Show All Movies", this::refreshMovieList), gbc(0, y));
+        inputPanel.add(createButton("Average Rating", this::displayAverageRating), gbc(1, y++));
+        inputPanel.add(createButton("Save", this::saveLibrary), gbc(0, y));
+        inputPanel.add(createButton("Load", this::loadLibrary), gbc(1, y++));
 
         add(inputPanel, BorderLayout.NORTH);
     }
 
+    // EFFECTS: helper to make consistent labels
+    private JLabel makeLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setForeground(Color.WHITE);
+        return label;
+    }
+
+    // MODIFIES: this
+    // EFFECTS: sets up the movie list display and remove button
     private void setupMovieList() {
         movieListModel = new DefaultListModel<>();
         movieList = new JList<>(movieListModel);
@@ -171,18 +172,16 @@ public class MovieAppGUI extends JFrame implements ActionListener {
         scrollPane.getViewport().setBackground(new Color(24, 26, 34));
         add(scrollPane, BorderLayout.CENTER);
 
-        JButton removeButton = new JButton("Remove Selected Movie");
-        removeButton.setBackground(new Color(102, 0, 204));
-        removeButton.setForeground(Color.WHITE);
-        removeButton.addActionListener(e -> removeSelectedMovie());
-
         JPanel southPanel = new JPanel();
         southPanel.setBackground(new Color(24, 26, 34));
-        southPanel.add(removeButton);
+        southPanel.add(createButton("Remove Selected Movie", this::removeSelectedMovie));
         add(southPanel, BorderLayout.SOUTH);
     }
 
-    public void actionPerformed(ActionEvent e) {
+    @SuppressWarnings("methodlength")
+    // MODIFIES: this
+    // EFFECTS: handles Add Movie button click
+    private void handleAddMovie() {
         String title = titleField.getText();
         String genre = (String) genreField.getSelectedItem();
         int rating;
@@ -206,7 +205,7 @@ public class MovieAppGUI extends JFrame implements ActionListener {
 
         Movie movie = new Movie(title, genre, rating, comment);
         library.addMovie(movie);
-        movieListModel.addElement(title + " (" + genre + ", Rating: " + rating + ") - " + comment);
+        movieListModel.addElement(movie.toDisplayString());
 
         titleField.setText("");
         ratingField.setText("");
@@ -214,31 +213,27 @@ public class MovieAppGUI extends JFrame implements ActionListener {
         genreField.setSelectedIndex(0);
     }
 
+    // MODIFIES: this
+    // EFFECTS: filters movies in library by selected genre and updates display
     private void filterByGenre() {
         String selectedGenre = (String) genreField.getSelectedItem();
-        java.util.List<Movie> filtered = library.getMoviesByGenre(selectedGenre);
-        movieListModel.clear();
-        for (Movie m : filtered) {
-            movieListModel.addElement(m.getTitle() + " (" + m.getGenre()
-                    + ", Rating: " + m.getRating() + ") - " + m.getComment());
-        }
+        displayMovies(library.getMoviesByGenre(selectedGenre));
     }
 
+    // MODIFIES: this
+    // EFFECTS: refreshes the movie list display with all movies in the library
     private void refreshMovieList() {
-        movieListModel.clear();
-        for (Movie m : library.getAllMovies()) {
-            movieListModel.addElement(m.getTitle() + " (" + m.getGenre()
-                    + ", Rating: " + m.getRating() + ") - " + m.getComment());
-        }
+        displayMovies(library.getAllMovies());
     }
 
+    // MODIFIES: this
+    // EFFECTS: removes selected movie from library and updates display
     private void removeSelectedMovie() {
         int selectedIndex = movieList.getSelectedIndex();
         if (selectedIndex != -1) {
             String entry = movieListModel.getElementAt(selectedIndex);
             String title = entry.substring(0, entry.indexOf(" ("));
-            boolean removed = library.removeMovie(title);
-            if (removed) {
+            if (library.removeMovie(title)) {
                 movieListModel.remove(selectedIndex);
                 JOptionPane.showMessageDialog(this, "Movie '" + title + "' removed.");
             } else {
@@ -249,6 +244,8 @@ public class MovieAppGUI extends JFrame implements ActionListener {
         }
     }
 
+    // MODIFIES: file at JSON_STORE
+    // EFFECTS: saves the movie library to JSON_STORE
     private void saveLibrary() {
         try {
             jsonWriter.open();
@@ -260,6 +257,8 @@ public class MovieAppGUI extends JFrame implements ActionListener {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: loads movie library from JSON_STORE
     private void loadLibrary() {
         try {
             library = jsonReader.read();
@@ -270,12 +269,21 @@ public class MovieAppGUI extends JFrame implements ActionListener {
         }
     }
 
+    // EFFECTS: displays average rating of movies in library
     private void displayAverageRating() {
         double avgRating = library.getAverageRating();
-        if (avgRating == 0.0) {
-            JOptionPane.showMessageDialog(this, "No movies in the library.");
-        } else {
-            JOptionPane.showMessageDialog(this, "Average Rating: " + String.format("%.2f", avgRating));
+        String message = (avgRating == 0.0)
+                ? "No movies in the library."
+                : "Average Rating: " + String.format("%.2f", avgRating);
+        JOptionPane.showMessageDialog(this, message);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: displays a given list of movies
+    private void displayMovies(List<Movie> movies) {
+        movieListModel.clear();
+        for (Movie m : movies) {
+            movieListModel.addElement(m.toDisplayString());
         }
     }
 }

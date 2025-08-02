@@ -74,4 +74,12 @@ public class Movie implements Writable {
         json.put("comment", comment);
         return json;
     }
+
+    // REQUIRES: this Movie has non-null title, genre, and comment; rating is an int
+    // (as per Movie constructor)
+    // EFFECTS: returns a string in the format
+    // "<title> (<genre>, Rating: <rating>) - <comment>"
+    public String toDisplayString() {
+        return getTitle() + " (" + getGenre() + ", Rating: " + getRating() + ") - " + getComment();
+    }
 }
