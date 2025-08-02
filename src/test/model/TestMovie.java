@@ -8,15 +8,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-
-
-
 class TestMovie {
     private Movie testMovieInterstellar;
+    private Movie testMovie2;
 
     @BeforeEach
     void runBefore() {
         testMovieInterstellar = new Movie("Interstellar", "Sci-Fi", 4, "Nolan's best");
+        testMovie2 = new Movie("Inception", "Sci-Fi", 9, "Amazing movie");
     }
 
     @Test
@@ -66,5 +65,10 @@ class TestMovie {
         assertTrue(result.contains("Sci-Fi"));
         assertTrue(result.contains("4"));
         assertTrue(result.contains("Nolan's best"));
+    }
+
+    @Test
+    public void testToDisplayString() {
+        assertEquals("Inception (Sci-Fi, Rating: 9) - Amazing movie", testMovie2.toDisplayString());
     }
 }
