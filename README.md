@@ -91,6 +91,20 @@ I chose this project because I'm passionate about movies and often find myself r
 - Movie not found by title: Avatar
 
 -------------------------------------------------------------------------------------------
+## Phase 4: Task 3 Refactoring changes / Paragraph 
+
+If I had more time, I would refactor the MovieAppGUI class to improve separation of concerns. Right now, the class handles both the user interface and a lot of the core application logic. For example, it creates Movie objects in handleAddMovie, checks rating inputs, filters movies by genre, removes movies from the library, and even saves and loads data through JsonWriter and JsonReader. Because of this, the GUI is tightly connected to business logic and persistence, which makes the code harder to maintain, test, and extend. A better design would move this non‑UI logic into a dedicated controller class, so the GUI could focus only on presentation and user interactions while the controller handled the operations.
+
+I would also look at reducing the duplicated logic between MovieApp (the console version) and MovieAppGUI. Both currently include similar features for adding, removing, and showing movies. This duplication mostly comes from the project’s design of first building a console UI and later upgrading to a GUI. Still, adding a controller would help solve this problem too, since both UIs could share the same underlying logic. That would make the system more consistent and easier to update in the future.
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------
 **Citation:**
 
 - Credit to Paul Carter. My persistence implementation / Phase 2 was modeled after the given sample authored by him:
