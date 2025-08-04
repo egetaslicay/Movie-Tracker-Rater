@@ -82,7 +82,8 @@ public class MovieAppGUI extends JFrame {
         add(splashPanel, BorderLayout.CENTER);
     }
 
-    // EFFECTS: attempts to load splash image; if fails, returns error label
+    // EFFECTS: returns a JLabel containing the splash image scaled to size;
+    //          if the image fails to load, returns a JLabel with an error message.
     private JLabel loadSplashImage() {
         try {
             BufferedImage splashImage = ImageIO.read(new File(IMAGE_PATH));
@@ -91,14 +92,15 @@ public class MovieAppGUI extends JFrame {
             }
             Image scaledImage = splashImage.getScaledInstance(500, 300, Image.SCALE_SMOOTH);
             return new JLabel(new ImageIcon(scaledImage));
-        } catch (IOException e) {
+        } catch (IOException e) {   
             JLabel errorLabel = new JLabel("Failed to load image");
             errorLabel.setForeground(Color.RED);
             return errorLabel;
         }
     }
 
-    // EFFECTS: helper that creates a JButton with consistent styling and action
+    // REQUIRES: action is not null
+    // EFFECTS: returns a JButton with given text and an attached action listener
     private JButton createButton(String text, Runnable action) {
         JButton button = new JButton(text);
         button.setBackground(new Color(102, 0, 204));
@@ -108,7 +110,7 @@ public class MovieAppGUI extends JFrame {
         return button;
     }
 
-    // EFFECTS: helper for GridBagLayout positioning
+    // EFFECTS: returns a GridBagConstraints object configured with the given grid position (x, y)
     private GridBagConstraints gbc(int x, int y) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = x;
@@ -152,7 +154,7 @@ public class MovieAppGUI extends JFrame {
         add(inputPanel, BorderLayout.NORTH);
     }
 
-    // EFFECTS: helper to make consistent labels
+    // EFFECTS: returns a JLabel with the given text styled in white foreground
     private JLabel makeLabel(String text) {
         JLabel label = new JLabel(text);
         label.setForeground(Color.WHITE);
