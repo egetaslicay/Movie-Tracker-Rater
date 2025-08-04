@@ -15,12 +15,14 @@ public class MovieLibrary implements Writable {
     // EFFECTS: constructor that creates an empty movie library
     public MovieLibrary() {
         movies = new ArrayList<>();
+        EventLog.getInstance().logEvent(new Event("Created a new MovieLibrary"));
     }
 
     // MODIFIES: this
     // EFFECTS: adds the given movie to the library
     public void addMovie(Movie m) {
         movies.add(m);
+        EventLog.getInstance().logEvent(new Event("Added movie: " + m.getTitle()));
     }
 
     // MODIFIES: this
@@ -30,6 +32,7 @@ public class MovieLibrary implements Writable {
         for (int i = 0; i < movies.size(); i++) {
             if (movies.get(i).getTitle().equals(title)) {
                 movies.remove(i);
+                EventLog.getInstance().logEvent(new Event("Removed movie: " + title));
                 return true;
             }
         }
@@ -39,6 +42,7 @@ public class MovieLibrary implements Writable {
     // EFFECTS: returns a *copy* of all movies in the library (not sure why i made
     // this to be honest?)
     public List<Movie> getAllMovies() {
+        EventLog.getInstance().logEvent(new Event("Viewed all movies"));
         return new ArrayList<>(movies);
     }
 
@@ -46,6 +50,7 @@ public class MovieLibrary implements Writable {
     public Movie findMovieByTitle(String title) {
         for (Movie m : movies) {
             if (m.getTitle().equals(title)) {
+                EventLog.getInstance().logEvent(new Event("Found movie by title: " + title));
                 return m;
             }
         }
@@ -60,19 +65,24 @@ public class MovieLibrary implements Writable {
                 matches.add(m);
             }
         }
+        EventLog.getInstance().logEvent(new Event("Filtered movies by genre: " + genre
+                + " (" + matches.size() + " match(es))"));
         return matches;
     }
 
     // EFFECTS: returns the average rating of all movies in the library
     public double getAverageRating() {
         if (movies.isEmpty()) {
+            EventLog.getInstance().logEvent(new Event("Attempted to calculate average rating but library was empty"));
             return 0.0;
         }
         int total = 0;
         for (Movie m : movies) {
             total += m.getRating();
         }
-        return (double) total / movies.size();
+        double avg = (double) total / movies.size();
+        EventLog.getInstance().logEvent(new Event("Calculated average rating: " + avg));
+        return avg;
     }
 
     // EFFECTS: returns a JSONObject that contains a list of all movies in the
@@ -86,6 +96,7 @@ public class MovieLibrary implements Writable {
 
         JSONObject json = new JSONObject();
         json.put("movies", jsonArray);
+        EventLog.getInstance().logEvent(new Event("Converted MovieLibrary to JSON with " + movies.size() + " movies"));
         return json;
     }
 }

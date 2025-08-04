@@ -76,7 +76,21 @@ I chose this project because I'm passionate about movies and often find myself r
 - As a user, when quitting the program I would like to be reminded that I can save the collection of movies if I choose to do so. 
 
 -------------------------------------------------------------------------------------------
+## Phase 4: Task 2
+## Representative sample of logged events: (Timestamps removed since I don't believe its necessary or looks good). 
 
+- Created a new MovieLibrary
+- Added movie: Inception
+- Added movie: The Dark Knight
+- Added movie: Titanic
+- Filtered movies by genre: Action (2 match)
+- Calculated average rating: 4.67
+- Removed movie: Titanic
+- Viewed all movies
+- Converted MovieLibrary to JSON with 2 movies
+- Movie not found by title: Avatar
+
+-------------------------------------------------------------------------------------------
 **Citation:**
 
 - Credit to Paul Carter. My persistence implementation / Phase 2 was modeled after the given sample authored by him:

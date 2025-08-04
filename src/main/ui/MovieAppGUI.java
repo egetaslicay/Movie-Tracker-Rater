@@ -1,7 +1,11 @@
 package ui;
 
+import model.Event;
+import model.EventLog;
 import javax.swing.*;
 import java.awt.*;
+
+import model.EventLog;
 import model.Movie;
 import model.MovieLibrary;
 import persistence.JsonReader;
@@ -13,6 +17,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.util.List;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class MovieAppGUI extends JFrame {
     private MovieLibrary library;
@@ -45,6 +51,8 @@ public class MovieAppGUI extends JFrame {
         setPreferredSize(new Dimension(800, 600));
         pack();
         setVisible(true);
+
+        setupWindowCloseLogging();
     }
 
     @SuppressWarnings("methodlength")
@@ -82,8 +90,22 @@ public class MovieAppGUI extends JFrame {
         add(splashPanel, BorderLayout.CENTER);
     }
 
+    // EFFECTS: sets up printing of the EventLog when the app is closed
+    private void setupWindowCloseLogging() {
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                System.out.println("\n--- Event Log ---");
+                for (Event event : EventLog.getInstance()) {
+                    System.out.println(event);
+                }
+                System.out.println("--- End of Event Log ---");
+            }
+        });
+    }
+
     // EFFECTS: returns a JLabel containing the splash image scaled to size;
-    //          if the image fails to load, returns a JLabel with an error message.
+    // if the image fails to load, returns a JLabel with an error message.
     private JLabel loadSplashImage() {
         try {
             BufferedImage splashImage = ImageIO.read(new File(IMAGE_PATH));
@@ -92,7 +114,7 @@ public class MovieAppGUI extends JFrame {
             }
             Image scaledImage = splashImage.getScaledInstance(500, 300, Image.SCALE_SMOOTH);
             return new JLabel(new ImageIcon(scaledImage));
-        } catch (IOException e) {   
+        } catch (IOException e) {
             JLabel errorLabel = new JLabel("Failed to load image");
             errorLabel.setForeground(Color.RED);
             return errorLabel;
@@ -110,7 +132,8 @@ public class MovieAppGUI extends JFrame {
         return button;
     }
 
-    // EFFECTS: returns a GridBagConstraints object configured with the given grid position (x, y)
+    // EFFECTS: returns a GridBagConstraints object configured with the given grid
+    // position (x, y)
     private GridBagConstraints gbc(int x, int y) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = x;

@@ -1,14 +1,6 @@
-{"movies": [
-    {
-        "genre": "Comedy",
-        "rating": 5,
-        "comment": "thats life",
-        "title": "Marlowe"
-    },
-    {
-        "genre": "Action",
-        "rating": 4,
-        "comment": "An unfinished story.",
-        "title": "Katherine"
-    }
-]}
+{"movies": [{
+    "genre": "Action",
+    "rating": 3,
+    "comment": "yuh",
+    "title": "E"
+}]}
